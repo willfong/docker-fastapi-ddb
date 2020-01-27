@@ -10,7 +10,8 @@ services:
     environment:
       AWS_ACCESS_KEY_ID: no_key_needed
       AWS_SECRET_ACCESS_KEY: no_key_needed
-      DDB_HOST: db
+      AWS_REGION_NAME: us-west-2
+      DDB_ENDPOINT_URL: http://db:8000
   db:
     container_name: db
     image: amazon/dynamodb-local
