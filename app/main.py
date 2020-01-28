@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from .routers import scores
-
+from .log import logger
 
 app = FastAPI()
 
@@ -11,4 +11,8 @@ app.include_router(
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    logger.debug("logging debug")
+    logger.info("logging info")
+    logger.warn("logging warning")
+    logger.error("logging error")
+    return {"msg": "Hello, World!"}
