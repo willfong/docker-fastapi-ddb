@@ -12,13 +12,14 @@ async def read_items():
     try:
         response = GameScores.get_item(
             Key={
-                'UserID': 'will'
+                'UserID': 'will',
+                'GameTitle': 'Overwatch'
             }
         )
     except ClientError as e:
         print(e.response['Error']['Message'])
     else:
-        item = response['Item']
+        item = response.get('Item')
         print("GetItem succeeded:")
         print(json.dumps(item, indent=4, cls=DecimalEncoder))
         return item
