@@ -6,6 +6,11 @@ app = FastAPI()
 
 app.include_router(
     scores.router,
+    prefix="/login",
+)
+
+app.include_router(
+    scores.router,
     prefix="/scores",
 )
 
