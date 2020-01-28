@@ -28,7 +28,7 @@ async def read_items():
 @router.get("/put")
 async def put_items():
     try:
-        response = GameScores.put_item(
+        GameScores.put_item(
             Item={
                 'UserID': 'will',
                 'GameTitle': 'Overwatch',
@@ -37,4 +37,4 @@ async def put_items():
     except ClientError as e:
         logger.error(e.response['Error']['Message'])
     else:
-        return {"Hello": "World"}
+        return {"msg": "Insert successful"}
