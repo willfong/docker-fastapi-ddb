@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from ..ddb import DecimalEncoder, GameScores
+from ..log import logger
 
 # Put these imports into ddb
 import json
@@ -17,11 +18,11 @@ async def read_items():
             }
         )
     except ClientError as e:
-        print(e.response['Error']['Message'])
+        logger.error(e.response['Error']['Message'])
     else:
         item = response.get('Item')
-        print("GetItem succeeded:")
-        print(json.dumps(item, indent=4, cls=DecimalEncoder))
+        logger.debug("GetItem success")
+        logger.debug(json.dumps(item, indent=4, cls=DecimalEncoder))
         return item
 
 @router.get("/put")
@@ -34,6 +35,6 @@ async def put_items():
             }
         )
     except ClientError as e:
-        print(e.response['Error']['Message'])
+        logger.error(e.response['Error']['Message'])
     else:
         return {"Hello": "World"}
