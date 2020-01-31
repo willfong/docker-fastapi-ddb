@@ -9,10 +9,6 @@ ddb = boto3.resource('dynamodb', region_name=os.environ.get('AWS_REGION_NAME'), 
 ddb_users = ddb.Table('Users')
 
 def ddb_users_find_create(user_hash, oauth_source, oauth_payload):
-    util.logger.warning(user_hash)
-    util.logger.warning(oauth_source)
-    util.logger.warning(oauth_payload)
-
     try:
         ddb_users.update_item(
             Key={
