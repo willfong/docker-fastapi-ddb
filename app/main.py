@@ -1,23 +1,19 @@
 from fastapi import FastAPI
-from .routers import scores
-from .log import logger
+from .routers import login
+from .services import util
 
 app = FastAPI()
 
 app.include_router(
-    scores.router,
+    login.router,
     prefix="/login",
 )
 
-app.include_router(
-    scores.router,
-    prefix="/scores",
-)
 
 @app.get("/")
 def read_root():
-    logger.debug("logging debug")
-    logger.info("logging info")
-    logger.warn("logging warning")
-    logger.error("logging error")
+    util.logger.debug("logging debug")
+    util.logger.info("logging info")
+    util.logger.warn("logging warning")
+    util.logger.error("logging error")
     return {"msg": "Hello, World!"}
