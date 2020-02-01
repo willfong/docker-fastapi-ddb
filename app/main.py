@@ -1,9 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from .routers import login, todo
 from .services import util
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse, JSONResponse
 
 app = FastAPI()
 
@@ -16,6 +16,7 @@ app.include_router(todo.router, prefix="/todo")
 
 
 # Require authentication for all requests
+# This doesn't really work yet, but the idea is here
 @app.middleware("http")
 async def require_authorization(request: Request, call_next):
     response = await call_next(request)
@@ -23,9 +24,9 @@ async def require_authorization(request: Request, call_next):
         util.logger.warning(request.headers)
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            util.logger.warning("You need to login")
-            return response
-        
+            util.logger.warning("You need to /login")
+            return JSONResponse(content={"msg": "Error logging in..."})
+        util.logger.warning(f"Logged in as: {auth_header}")
     return response
 
 

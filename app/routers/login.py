@@ -24,7 +24,7 @@ def login_facebook(token: LoginToken):
     util.logger.warning(f"facebook data: {facebook_data}")
     user_id = user.find_or_create_user('facebook', facebook_data['user_id'], facebook_data)
     if user_id:
-        return create_login_token(user_id)
+        return {"token": create_login_token(user_id)}
     else:
         return {"error": "could not log in"}
 

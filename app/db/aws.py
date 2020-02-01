@@ -26,6 +26,7 @@ def ddb_users_find_create(user_hash, oauth_source, oauth_payload):
         return False
     return True
 
+
 def ddb_todos_add_todo(pid, dt, uid, todo):
     try:
         ddb_todos.put_item(
