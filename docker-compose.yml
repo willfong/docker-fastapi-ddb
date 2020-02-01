@@ -12,6 +12,10 @@ services:
       AWS_SECRET_ACCESS_KEY: no_key_needed
       AWS_REGION_NAME: us-west-2
       DDB_ENDPOINT_URL: http://db:8000
+    env_file:
+      - .env
+    volumes:
+      - "./app/static:/app/app/static/"
   db:
     container_name: db
     image: amazon/dynamodb-local

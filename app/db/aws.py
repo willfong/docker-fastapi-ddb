@@ -7,6 +7,7 @@ from ..services import util
 ddb = boto3.resource('dynamodb', region_name=os.environ.get('AWS_REGION_NAME'), endpoint_url=os.environ.get('DDB_ENDPOINT_URL'))
 
 ddb_users = ddb.Table('Users')
+ddb_todos = ddb.Table('Todos')
 
 def ddb_users_find_create(user_hash, oauth_source, oauth_payload):
     try:
@@ -21,7 +22,21 @@ def ddb_users_find_create(user_hash, oauth_source, oauth_payload):
             },
         )
     except ClientError as e:
-        print(e.response['Error']['Message'])
+        util.logger.error(e)
         return False
-    
+    return True
+
+def ddb_todos_add_todo(pid, dt, uid, todo):
+    try:
+        ddb_todos.put_item(
+            Item={
+                'id': pid,
+                'datetime': dt,
+                'users_id': uid,
+                'todo': todo
+            }
+        )
+    except ClientError as e:
+        util.logger.error(e)
+        return False
     return True

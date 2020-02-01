@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-from .routers import login
+from .routers import login, todo
 from .services import util
+from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
 
@@ -10,10 +11,22 @@ app = FastAPI()
 # files from S3 directly.
 app.mount("/static", StaticFiles(directory="/app/app/static"), name="static")
 
-app.include_router(
-    login.router,
-    prefix="/login",
-)
+app.include_router(login.router, prefix="/login")
+app.include_router(todo.router, prefix="/todo")
+
+
+# Require authentication for all requests
+@app.middleware("http")
+async def require_authorization(request: Request, call_next):
+    response = await call_next(request)
+    if request.scope['path'].startswith('/todo'):
+        util.logger.warning(request.headers)
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            util.logger.warning("You need to login")
+            return response
+        
+    return response
 
 
 @app.get("/")

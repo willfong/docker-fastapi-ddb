@@ -17,13 +17,21 @@ def create_login_token(sub):
         util.get_secret_token())
     return token
 
+
 @router.post("/facebook")
 def login_facebook(token: LoginToken):
-    return {"msg": "Hello, World!"}
+    facebook_data = user.facebook_verify_access_token(token.value)
+    util.logger.warning(f"facebook data: {facebook_data}")
+    user_id = user.find_or_create_user('facebook', facebook_data['user_id'], facebook_data)
+    if user_id:
+        return create_login_token(user_id)
+    else:
+        return {"error": "could not log in"}
+
 
 @router.post("/google")
 def login_google(token: LoginToken):
-    google_data = util.google_verify_access_token(token.value)
+    google_data = user.google_verify_access_token(token.value)
     util.logger.warning(google_data)
     user_id = user.find_or_create_user('google', google_data['sub'], google_data)
     if user_id:
