@@ -21,12 +21,12 @@ app.include_router(todo.router, prefix="/todo")
 async def require_authorization(request: Request, call_next):
     response = await call_next(request)
     if request.scope['path'].startswith('/todo'):
-        util.logger.warning(request.headers)
+        #util.logger.warning(request.headers)
         auth_header = request.headers.get('Authorization')
         if not auth_header:
             util.logger.warning("You need to /login")
             return JSONResponse(content={"msg": "Error logging in..."})
-        util.logger.warning(f"Logged in as: {auth_header}")
+        #util.logger.warning(f"Logged in as: {auth_header}")
     return response
 
 

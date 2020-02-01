@@ -14,7 +14,6 @@ logger.addHandler(handler)
 def get_user_data_from_token(token):
     token_dict = verify_token(token)
     if token_dict:
-        logger.error(token_dict)
         return token_dict
     logger.error(f'Could not verify token: {token}')
     return False

@@ -22,9 +22,18 @@ def ddb_users_find_create(user_hash, oauth_source, oauth_payload):
             },
         )
     except ClientError as e:
-        util.logger.error(e)
+        util.logger.error('[ddb_users_find_create] ' + e)
         return False
     return True
+
+
+def ddb_todos_get_all():
+    try:
+        response = ddb_todos.scan()
+    except ClientError as e:
+        util.logger.error('[ddb_todos_get_all] ' + e)
+        return False
+    return response.get('Items')
 
 
 def ddb_todos_add_todo(pid, dt, uid, todo):
@@ -38,6 +47,6 @@ def ddb_todos_add_todo(pid, dt, uid, todo):
             }
         )
     except ClientError as e:
-        util.logger.error(e)
+        util.logger.error('[ddb_todos_add_todo] ' + e)
         return False
     return True
