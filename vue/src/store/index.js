@@ -40,7 +40,7 @@ export default new Vuex.Store({
         getters.FB.getLoginStatus(function(response) {
           if (response.status === 'connected') {
             commit('FB_ACCESS_TOKEN', response.authResponse.accessToken);
-            axios.post('/user/login/facebook', {
+            axios.post('/login/facebook', {
               value: response.authResponse.accessToken
             })
             .then(function (response) {

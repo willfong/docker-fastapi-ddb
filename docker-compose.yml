@@ -17,7 +17,7 @@ services:
     env_file:
       - .env
     volumes:
-      - "./app/static:/app/app/static/"
+      - "./static:/app/app/static/"
 
   ddb:
     container_name: ddb
