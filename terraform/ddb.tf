@@ -10,8 +10,8 @@ resource "aws_dynamodb_table" "users" {
   }
 }
 
-resource "aws_dynamodb_table" "todos" {
-  name           = "Todos"
+resource "aws_dynamodb_table" "messages" {
+  name           = "Messages"
   billing_mode   = "PROVISIONED"
   read_capacity  = 20
   write_capacity = 20

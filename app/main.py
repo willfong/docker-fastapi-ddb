@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from .routers import login, todo
+from .routers import login, messages
 from .services import util
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
@@ -12,9 +12,10 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="/app/app/static"), name="static")
 
 app.include_router(login.router, prefix="/login")
-app.include_router(todo.router, prefix="/todo")
+app.include_router(messages.router, prefix="/messages")
 
 
+'''
 # Require authentication for all requests
 # This doesn't really work yet, but the idea is here
 @app.middleware("http")
@@ -28,7 +29,7 @@ async def require_authorization(request: Request, call_next):
             return JSONResponse(content={"msg": "Error logging in..."})
         #util.logger.warning(f"Logged in as: {auth_header}")
     return response
-
+'''
 
 @app.get("/")
 def index():

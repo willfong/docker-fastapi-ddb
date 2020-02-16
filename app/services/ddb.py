@@ -7,7 +7,7 @@ from ..services import util
 dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('AWS_REGION_NAME'), endpoint_url=os.environ.get('DDB_ENDPOINT_URL'))
 
 USERS = dynamodb.Table('Users')
-TODOS = dynamodb.Table('Todos')
+MESSAGES = dynamodb.Table('Messages')
 
 
 def upsert(table, key, expression, values):
@@ -22,28 +22,33 @@ def upsert(table, key, expression, values):
         return False
     return True
 
-
-
-def todos_get_all():
+def put(table, item):
     try:
-        response = TODOS.scan()
+        table.put_item(Item=item)
     except ClientError as e:
-        util.logger.error('[ddb_todos_get_all] ' + e)
-        return False
-    return response.get('Items')
-
-
-def todos_add_todo(pid, dt, uid, todo):
-    try:
-        TODOS.put_item(
-            Item={
-                'id': pid,
-                'datetime': dt,
-                'users_id': uid,
-                'todo': todo
-            }
-        )
-    except ClientError as e:
-        util.logger.error('[ddb_todos_add_todo] ' + e)
+        util.logger.error(f"[PUT|{table}|{item}] {e}")
         return False
     return True
+
+
+def scan(table, sort=None):
+    try:
+        response = table.scan()
+        data = response['Items']
+        while 'LastEvaluatedKey' in response:
+            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            data.extend(response['Items'])
+    except ClientError as e:
+        util.logger.error(f"[SCAN|{table}] {e}")
+        return False
+    if sort:
+        data.sort(key=lambda x: x[sort], reverse=True)
+    return data
+
+def get(table, key):
+    try: 
+        response = table.get_item(Key=key)
+    except ClientError as e:
+        util.logger.error(f"[GET|{table}|{key}] {e}")
+        return False
+    return response['Item']

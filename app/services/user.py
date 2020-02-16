@@ -1,8 +1,7 @@
 import os
 import hashlib
 import requests
-from ..services import ddb
-from ..services import util
+from ..services import ddb, redis, util
 
 
 def google_verify_access_token(id_token):
@@ -30,10 +29,12 @@ def facebook_verify_access_token(access_token):
     app_token = facebook_get_app_token()
     access_token_url = f'https://graph.facebook.com/debug_token?input_token={access_token}&access_token={app_token}'
     try:
-        user_data = requests.get(access_token_url).json()['data']
+        debug_token = requests.get(access_token_url).json()['data']
     except (ValueError, KeyError, TypeError) as error:
         util.logger.error(f"[USER|facebook_verify_access_token] {error}")
         return error
+    user_data_url = f"https://graph.facebook.com/{debug_token['user_id']}/?&access_token={app_token}"
+    user_data = requests.get(user_data_url).json()
     return user_data
 
 
@@ -48,3 +49,13 @@ def find_or_create_user(oauth_source, user_id, oauth_payload):
     else:
         util.logger.error("[USER|find_or_create_user] Some error here")
         return False
+
+
+def lookup(id):
+    u = redis.get(id)
+    if not u:
+        d = ddb.get(ddb.USERS, {'id': id})
+        if d['oauth_source'] == 'facebook':
+            u = {'name': d['oauth_payload']['name']}
+        redis.put(id, u, 3600*24)
+    return u

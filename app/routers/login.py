@@ -21,8 +21,7 @@ def create_login_token(sub):
 @router.post("/facebook")
 def login_facebook(token: LoginToken):
     facebook_data = user.facebook_verify_access_token(token.value)
-    util.logger.warning(f"facebook data: {facebook_data}")
-    user_id = user.find_or_create_user('facebook', facebook_data['user_id'], facebook_data)
+    user_id = user.find_or_create_user('facebook', facebook_data['id'], facebook_data)
     if user_id:
         return {"token": create_login_token(user_id)}
     else:
@@ -38,3 +37,7 @@ def login_google(token: LoginToken):
         return create_login_token(user_id)
     else:
         return {"error": "could not log in"}
+
+@router.get("/lookup")
+def lookup(id: str):
+    return user.lookup(id)
