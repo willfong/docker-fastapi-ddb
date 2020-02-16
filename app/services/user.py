@@ -1,7 +1,7 @@
 import os
 import hashlib
 import requests
-from ..db import aws
+from ..services import ddb
 from ..services import util
 
 
@@ -12,8 +12,9 @@ def google_verify_access_token(id_token):
 
     response = requests.get(f'https://oauth2.googleapis.com/tokeninfo?id_token={id_token}').json()
     if response.get('error'):
-        print(response.get('error_description'))
-        return response.get('error_description')
+        errmsg = response.get('error_description')
+        util.logger.error(f"[USER|google_verify_access_token] {errmsg}")
+        return False
     # Here, you should check that your domain name is in hd
     # if jwt['hd'] == 'example.com':
     #   return jwt
@@ -39,7 +40,10 @@ def facebook_verify_access_token(access_token):
 def find_or_create_user(oauth_source, user_id, oauth_payload):
     user_plaintext = f"{oauth_source}|{user_id}"
     user_hash = hashlib.sha224(user_plaintext.encode('ascii')).hexdigest()
-    if aws.ddb_users_find_create(user_hash, oauth_source, oauth_payload):
+    key = {'id': user_hash}
+    expression = "SET oauth_source = :source, oauth_payload = :payload"
+    values = {':source': oauth_source, ':payload': oauth_payload}
+    if ddb.upsert(ddb.USERS, key, expression, values):
         return user_hash
     else:
         util.logger.error("Error with creating user in DDB")

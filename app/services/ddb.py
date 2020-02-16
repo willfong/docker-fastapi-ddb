@@ -9,22 +9,19 @@ dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('AWS_REGION_NAM
 USERS = dynamodb.Table('Users')
 TODOS = dynamodb.Table('Todos')
 
-def users_find_create(user_hash, oauth_source, oauth_payload):
+
+def upsert(table, key, expression, values):
     try:
-        USERS.update_item(
-            Key={
-                'id': user_hash
-            }, 
-            UpdateExpression="SET oauth_source = :source, oauth_payload = :payload",
-            ExpressionAttributeValues={
-                ':source': oauth_source,
-                ':payload': oauth_payload
-            },
+        table.update_item(
+            Key=key, 
+            UpdateExpression=expression,
+            ExpressionAttributeValues=values,
         )
     except ClientError as e:
-        util.logger.error('[ddb_users_find_create] ' + e)
+        util.logger.error(f"[UPSERT|{table}|{key}] {e}")
         return False
     return True
+
 
 
 def todos_get_all():
