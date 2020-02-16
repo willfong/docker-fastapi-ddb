@@ -38,6 +38,9 @@ services:
       - "3000:443"
       - "80:80"
       - "443:443"
+    depends_on:
+      - app
+      - certbot
     env_file:
       - .env
     volumes:
