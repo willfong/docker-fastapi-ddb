@@ -4,14 +4,14 @@ from botocore.exceptions import ClientError
 from ..services import util
 
 
-ddb = boto3.resource('dynamodb', region_name=os.environ.get('AWS_REGION_NAME'), endpoint_url=os.environ.get('DDB_ENDPOINT_URL'))
+dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('AWS_REGION_NAME'), endpoint_url=os.environ.get('DDB_ENDPOINT_URL'))
 
-ddb_users = ddb.Table('Users')
-ddb_todos = ddb.Table('Todos')
+USERS = dynamodb.Table('Users')
+TODOS = dynamodb.Table('Todos')
 
-def ddb_users_find_create(user_hash, oauth_source, oauth_payload):
+def users_find_create(user_hash, oauth_source, oauth_payload):
     try:
-        ddb_users.update_item(
+        USERS.update_item(
             Key={
                 'id': user_hash
             }, 
@@ -27,18 +27,18 @@ def ddb_users_find_create(user_hash, oauth_source, oauth_payload):
     return True
 
 
-def ddb_todos_get_all():
+def todos_get_all():
     try:
-        response = ddb_todos.scan()
+        response = TODOS.scan()
     except ClientError as e:
         util.logger.error('[ddb_todos_get_all] ' + e)
         return False
     return response.get('Items')
 
 
-def ddb_todos_add_todo(pid, dt, uid, todo):
+def todos_add_todo(pid, dt, uid, todo):
     try:
-        ddb_todos.put_item(
+        TODOS.put_item(
             Item={
                 'id': pid,
                 'datetime': dt,
