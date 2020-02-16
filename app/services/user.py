@@ -32,7 +32,7 @@ def facebook_verify_access_token(access_token):
     try:
         user_data = requests.get(access_token_url).json()['data']
     except (ValueError, KeyError, TypeError) as error:
-        util.logger.error(f"Error accessing Facebook: {error}")
+        util.logger.error(f"[USER|facebook_verify_access_token] {error}")
         return error
     return user_data
 
@@ -46,5 +46,5 @@ def find_or_create_user(oauth_source, user_id, oauth_payload):
     if ddb.upsert(ddb.USERS, key, expression, values):
         return user_hash
     else:
-        util.logger.error("Error with creating user in DDB")
+        util.logger.error("[USER|find_or_create_user] Some error here")
         return False
