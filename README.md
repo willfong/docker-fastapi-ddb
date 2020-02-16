@@ -7,6 +7,12 @@ This is a template repository for an opinionated proof-of-concept architecture.
 - Local development - The entire infrastrucutre must easily run locally for end-to-end testing
 - Cloud deployment - We're focused on AWS-specifics here
 
+## Getting Started
+
+1. https://github.com/willfong/docker-fastapi-ddb/generate to create your own copy of this template
+
+
+
 
 ## Vue
 
@@ -28,3 +34,12 @@ https://developers.google.com/identity/protocols/OpenIDConnect
 
 
 ## Production Deployment Notes
+```
+docker run -it --rm --name certbot \
+    -p 80:80 \
+    -v "${PWD}/data/certbot/conf/:/etc/letsencrypt" \
+    -v "${PWD}/data/certbot/lib/:/var/lib/letsencrypt" \
+    -v "${PWD}/data/certbot/www/:/www" \
+    --name initcert \
+    certbot/certbot certonly
+```
