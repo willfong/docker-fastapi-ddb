@@ -4,21 +4,30 @@ services:
     container_name: app
     build: .
     depends_on:
-      - db
+      - ddb
+      - redis
     ports:
       - "5000:80"
     environment:
       AWS_ACCESS_KEY_ID: no_key_needed
       AWS_SECRET_ACCESS_KEY: no_key_needed
       AWS_REGION_NAME: us-west-2
-      DDB_ENDPOINT_URL: http://db:8000
+      DDB_ENDPOINT_URL: http://ddb:8000
+      REDIS_ENDPOINT_URL: redis
     env_file:
       - .env
     volumes:
       - "./app/static:/app/app/static/"
-  db:
-    container_name: db
+
+  ddb:
+    container_name: ddb
     image: amazon/dynamodb-local
     restart: always
     ports:
         - "8000:8000"
+  
+  redis:
+    container_name: redis
+    image: redis:5
+    restart: always
+    
