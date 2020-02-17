@@ -1,17 +1,17 @@
-# Docker // FastAPI // Vue // DynamoDB
+# Docker / FastAPI / Vue / DynamoDB
 
 This is a template repository for an opinionated proof-of-concept architecture.
+
 
 ## Guiding Principles
 
 - Local development - The entire infrastrucutre must easily run locally for end-to-end testing
 - Cloud deployment - We're focused on AWS-specifics here
 
+
 ## Getting Started
 
 1. https://github.com/willfong/docker-fastapi-ddb/generate to create your own copy of this template
-
-
 
 
 ## Vue
@@ -27,6 +27,17 @@ There is no need to specify AWS credentials. dynamodb-local just needs to have a
 Use Terraform to provision the DDB schema: `terraform apply -auto-approve`
 
 Manually check tables: `aws dynamodb scan --table-name Users --endpoint-url http://localhost:8000`
+
+
+## Environment File
+
+The system looks for `.env` in the checkout folder:
+```
+FACEBOOK_CLIENT_ID=123...890
+FACEBOOK_CLIENT_SECRET=123...abc
+DOMAIN_NAME=domain-for-ssl-cert.example.com
+```
+
 
 ## Google Auth
 What all the keys mean
