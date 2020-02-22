@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from .routers import login, messages
-from .services import util
+from .services import util, statsd
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse, JSONResponse
@@ -32,11 +32,13 @@ async def require_authorization(request: Request, call_next):
 '''
 
 @app.get("/")
+@statsd.statsd_root_stats
 def index():
     return RedirectResponse(url='/static/index.html')
 
 
 @app.get("/log-output-test")
+@statsd.statsd_root_stats
 def log_output_test():
     util.logger.debug("logging debug")
     util.logger.info("logging info")
