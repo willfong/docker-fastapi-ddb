@@ -1,7 +1,7 @@
 import os
 import boto3
 from botocore.exceptions import ClientError
-from ..services import util
+from ..services import util, statsd
 
 
 dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('AWS_REGION_NAME'), endpoint_url=os.environ.get('DDB_ENDPOINT_URL'))
@@ -9,7 +9,7 @@ dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('AWS_REGION_NAM
 USERS = dynamodb.Table('Users')
 MESSAGES = dynamodb.Table('Messages')
 
-
+@statsd.statsd_root_stats
 def upsert(table, key, expression, values):
     try:
         table.update_item(
@@ -22,6 +22,7 @@ def upsert(table, key, expression, values):
         return False
     return True
 
+@statsd.statsd_root_stats
 def put(table, item):
     try:
         table.put_item(Item=item)
@@ -30,7 +31,7 @@ def put(table, item):
         return False
     return True
 
-
+@statsd.statsd_root_stats
 def scan(table, sort=None):
     try:
         response = table.scan()
@@ -45,6 +46,7 @@ def scan(table, sort=None):
         data.sort(key=lambda x: x[sort], reverse=True)
     return data
 
+@statsd.statsd_root_stats
 def get(table, key):
     try: 
         response = table.get_item(Key=key)

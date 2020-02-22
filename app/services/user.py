@@ -1,9 +1,9 @@
 import os
 import hashlib
 import requests
-from ..services import ddb, redis, util
+from ..services import ddb, redis, util, statsd
 
-
+@statsd.statsd_root_stats
 def google_verify_access_token(id_token):
     # We're doing it the lazy way here. What we get from the client side is JWT, we can just verify that instead of calling Google
     # Reason for that is to reduce the amount of dependencies for this, a demo app
@@ -22,9 +22,11 @@ def google_verify_access_token(id_token):
 
 
 FACEBOOK_URL_APP_TOKEN = f'https://graph.facebook.com/oauth/access_token?client_id={os.environ.get("FACEBOOK_CLIENT_ID")}&client_secret={os.environ.get("FACEBOOK_CLIENT_SECRET")}&grant_type=client_credentials'
+@statsd.statsd_root_stats
 def facebook_get_app_token():
     return requests.get(FACEBOOK_URL_APP_TOKEN).json()['access_token']
 
+@statsd.statsd_root_stats
 def facebook_verify_access_token(access_token):
     app_token = facebook_get_app_token()
     access_token_url = f'https://graph.facebook.com/debug_token?input_token={access_token}&access_token={app_token}'
@@ -38,6 +40,7 @@ def facebook_verify_access_token(access_token):
     return user_data
 
 
+@statsd.statsd_root_stats
 def find_or_create_user(oauth_source, user_id, oauth_payload):
     user_plaintext = f"{oauth_source}|{user_id}"
     user_hash = hashlib.sha224(user_plaintext.encode('ascii')).hexdigest()
@@ -51,11 +54,11 @@ def find_or_create_user(oauth_source, user_id, oauth_payload):
         return False
 
 
+@statsd.statsd_root_stats
 def lookup(id):
     u = redis.get(id)
     if not u:
         d = ddb.get(ddb.USERS, {'id': id})
-        if d['oauth_source'] == 'facebook':
-            u = {'name': d['oauth_payload']['name']}
+        u = {'name': d['oauth_payload'].get('name')}
         redis.put(id, u, 3600*24)
     return u

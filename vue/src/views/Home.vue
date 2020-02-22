@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <p>{{userCache}}</p>
     <MessageNew v-if="jwt" />
     <Message v-for="message in messages" v-bind:key="message.id" v-bind:message="message" />
   </div>
@@ -26,6 +27,7 @@ export default {
       "personalID",
       "jwt",
       "messages",
+      "userCache",
     ])
   },
   components: {

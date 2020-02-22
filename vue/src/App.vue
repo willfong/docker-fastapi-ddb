@@ -12,6 +12,7 @@
         @get-initial-status="getUserData"
         @sdk-loaded="sdkLoaded"
       />
+      <button class="button" v-on:click="testAccountLogin">Test Account Login</button>
     </div>
     <router-view />
   </div>
@@ -24,12 +25,17 @@ import { mapGetters } from "vuex";
 export default {
   name: "appMain",
   components: {
-    facebookLogin
+    facebookLogin,
   },
   computed: {
     ...mapGetters(["isConnected", "name", "email", "picture", "personalID"])
   },
   methods: {
+    testAccountLogin() {
+      var username = prompt("Please enter in a user name:");
+      console.log("Logging in with test account: " + username); // eslint-disable-line no-console
+      this.$store.dispatch("testAccountLogin", username);
+    },
     getUserData() {
       this.$store.dispatch("fbGetUserData");
     },

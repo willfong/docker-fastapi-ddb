@@ -16,6 +16,7 @@ export default new Vuex.Store({
     FB: undefined,
     messages: [],
     userCache: {},
+    
   },
   mutations: {
     FB_IS_CONNECTED(state, isConnected) {
@@ -44,6 +45,18 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    testAccountLogin({dispatch}, username) {
+      axios.post('/login/test-account', {
+        value: username
+      })
+      .then(function (response) {
+        console.log("Test Account JWT: " + response.data.token); // eslint-disable-line no-console
+        axios.defaults.headers.common['Authorization'] = response.data.token;
+        dispatch('jwtSet', response.data.token);
+        // TODO: Save token locally so user won't have to log back in on refresh
+      })
+    },
+
     fbGetUserData({ commit, getters, dispatch }) {
       if (getters.FB) {
         getters.FB.api('/me', 'GET', { fields: 'id,name,email,picture' },

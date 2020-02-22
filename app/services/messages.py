@@ -1,9 +1,9 @@
 import uuid
 from datetime import datetime
 from ..services import ddb
-from ..services import util
+from ..services import util, statsd
 
-
+@statsd.statsd_root_stats
 def add(user_id, message_text):
     msg_id = str(uuid.uuid4())
     dt = datetime.utcnow().isoformat()
@@ -15,6 +15,7 @@ def add(user_id, message_text):
     }
     return ddb.put(ddb.MESSAGES, item)
 
+@statsd.statsd_root_stats
 def get_all():
     return ddb.scan(ddb.MESSAGES, sort='datetime')
 
