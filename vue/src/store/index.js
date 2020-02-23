@@ -29,14 +29,16 @@ export default new Vuex.Store({
     },
     messageGet({getters, dispatch, commit}) {
       axios.get("/messages/").then(function(response) {
-        let x;
-        for (x of response.data){
-          if (!getters.userCache[x.user_id]) {
-            // TODO: This is async, so repeated messages will be fetched multiple times
-            dispatch('userCacheLookup', x.user_id);
+        if (response.data) {
+          let x;
+          for (x of response.data){
+            if (!getters.userCache[x.user_id]) {
+              // TODO: This is async, so repeated messages will be fetched multiple times
+              dispatch('userCacheLookup', x.user_id);
+            }
           }
+          commit('MESSAGES_UPDATE', response.data);
         }
-        commit('MESSAGES_UPDATE', response.data);
       });
     },
     messageAdd({dispatch}, text) {
