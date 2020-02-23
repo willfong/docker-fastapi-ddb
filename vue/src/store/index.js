@@ -90,6 +90,7 @@ export default new Vuex.Store({
       commit('FB_IS_CONNECTED', false);
     },
     jwtSet({commit}, jwt) {
+      axios.defaults.headers.common['Authorization'] = jwt;
       commit('JWT_SET', jwt);
     },
     messageGet({getters, dispatch, commit}) {
