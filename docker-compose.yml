@@ -65,4 +65,4 @@ services:
     container_name: grafana
     image: grafana/grafana
     ports:
-      - "9080:3000"
+      - "9000:3000"
