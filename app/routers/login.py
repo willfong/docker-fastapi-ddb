@@ -1,6 +1,6 @@
 import jwt
 from datetime import datetime, timedelta
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from ..services import user, util, statsd
 
@@ -34,6 +34,8 @@ def login_facebook(token: LoginToken):
 def login_google(token: LoginToken):
     google_data = user.google_verify_access_token(token.value)
     util.logger.warning(google_data)
+    if not google_data:
+        raise HTTPException(status_code=403, detail="Invalid Google Token")
     user_id = user.find_or_create_user('google', google_data['sub'], google_data)
     if user_id:
         return {"token": create_login_token(user_id)}
