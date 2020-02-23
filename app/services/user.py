@@ -1,6 +1,7 @@
 import os
 import hashlib
 import requests
+from fastapi import HTTPException
 from ..services import ddb, redis, util, statsd
 
 @statsd.statsd_root_stats
@@ -13,7 +14,7 @@ def google_verify_access_token(id_token):
     if response.get('error'):
         errmsg = response.get('error_description')
         util.logger.error(f"[USER|google_verify_access_token] {errmsg}")
-        return False
+        raise HTTPException(status_code=403, detail="Invalid Google Token")
     # Here, you should check that your domain name is in hd
     # if jwt['hd'] == 'example.com':
     #   return jwt
@@ -50,8 +51,7 @@ def find_or_create_user(oauth_source, user_id, oauth_payload):
     if ddb.upsert(ddb.USERS, key, expression, values):
         return user_hash
     else:
-        util.logger.error("[USER|find_or_create_user] Some error here")
-        return False
+        raise HTTPException(status_code=500, detail="Could not create user. Try again later.")
 
 
 @statsd.statsd_root_stats
