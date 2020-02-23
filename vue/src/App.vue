@@ -38,8 +38,15 @@ export default {
     ...mapGetters(["isConnected", "name", "email", "picture", "personalID"])
   },
   methods: {
-    fbLogin(r) {
-      console.log(r); // eslint-disable-line no-console
+    fbLogin(response) {
+      console.log("Facebook Login: " + response.authResponse.accessToken); // eslint-disable-line no-console
+      axios.post('/login/facebook', {
+        value: response.authResponse.accessToken
+      })
+      .then(response => {
+        this.$store.dispatch("jwtSet", response.data.token);
+        // TODO: Save token locally so user won't have to log back in on refresh
+      })
     },
     testAccountLogin() {
       var username = prompt("Please enter in a user name:");
@@ -53,18 +60,6 @@ export default {
         // TODO: Save token locally so user won't have to log back in on refresh
       });
     },
-    getUserData() {
-      this.$store.dispatch("fbGetUserData");
-    },
-    sdkLoaded(payload) {
-      this.$store.dispatch("fbSdkLoaded", payload);
-    },
-    onLogin() {
-      this.$store.dispatch("fbOnLogin");
-    },
-    onLogout() {
-      this.$store.dispatch("fbOnLogout");
-    }
   }
 };
 </script>
