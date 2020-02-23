@@ -4,16 +4,6 @@
     <div id="nav">
       <router-link to="/">Home</router-link>|
       <router-link to="/about">About</router-link>
-      <!--
-      <facebook-login
-        class="button"
-        appId="1841024232697094"
-        @login="onLogin"
-        @logout="onLogout"
-        @get-initial-status="getUserData"
-        @sdk-loaded="sdkLoaded"
-      />
-      -->
       <v-facebook-login app-id="1841024232697094" v-on:login="fbLogin"></v-facebook-login>
       <button class="button" v-on:click="testAccountLogin">Test Account Login</button>
        <g-signin-button
@@ -28,7 +18,6 @@
 </template>
 
 <script>
-//import facebookLogin from "facebook-login-vuejs";
 import axios from "axios";
 import "regenerator-runtime";
 import VFacebookLogin from "vue-facebook-login-component";
@@ -44,7 +33,6 @@ export default {
     }
   },
   components: {
-    //facebookLogin,
     VFacebookLogin,
   },
   computed: {
@@ -92,7 +80,6 @@ export default {
 </script>
 <style scoped>
 .g-signin-button {
-  /* This is where you control how the button looks. Be creative! */
   display: inline-block;
   padding: 4px 8px;
   border-radius: 3px;
