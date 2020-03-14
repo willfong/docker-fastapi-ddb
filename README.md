@@ -33,6 +33,9 @@ Manually check tables: `aws dynamodb scan --table-name Users --endpoint-url http
 
 The system looks for `.env` in the checkout folder:
 ```
+AWS_ACCESS_KEY_ID: no_key_needed
+AWS_SECRET_ACCESS_KEY: no_key_needed
+AWS_REGION_NAME: us-west-2
 FACEBOOK_CLIENT_ID=123...890
 FACEBOOK_CLIENT_SECRET=123...abc
 DOMAIN_NAME=domain-for-ssl-cert.example.com
