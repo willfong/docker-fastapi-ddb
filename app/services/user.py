@@ -46,9 +46,10 @@ def find_or_create_user(oauth_source, user_id, oauth_payload):
     user_plaintext = f"{oauth_source}|{user_id}"
     user_hash = hashlib.sha224(user_plaintext.encode('ascii')).hexdigest()
     key = {'id': user_hash}
-    expression = "SET oauth_source = :source, oauth_payload = :payload"
+    expression = "SET #source = :source, #payload = :payload"
+    names = {'#source': 'oauth_source', '#payload': 'oauth_payload'}
     values = {':source': oauth_source, ':payload': oauth_payload}
-    if ddb.upsert(ddb.USERS, key, expression, values):
+    if ddb.upsert(ddb.USERS, key, expression, names, values):
         return user_hash
     else:
         raise HTTPException(status_code=500, detail="Could not create user. Try again later.")

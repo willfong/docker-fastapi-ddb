@@ -10,15 +10,21 @@ USERS = dynamodb.Table('Users')
 MESSAGES = dynamodb.Table('Messages')
 
 @statsd.statsd_root_stats
-def upsert(table, key, expression, values):
+def upsert(table, key, expression, names, values, condition=None):
+    args = {
+        "Key": key, 
+        "UpdateExpression": expression,
+        "ExpressionAttributeNames": names,
+        "ExpressionAttributeValues": values
+    }
+    if condition:
+        args['ConditionExpression'] = condition
+    
     try:
-        table.update_item(
-            Key=key, 
-            UpdateExpression=expression,
-            ExpressionAttributeValues=values,
-        )
+        table.update_item(**args)
     except ClientError as e:
         util.logger.error(f"[UPSERT|{table}|{key}] {e}")
+        util.logger.error(args)
         return False
     return True
 
@@ -53,4 +59,29 @@ def get(table, key):
     except ClientError as e:
         util.logger.error(f"[GET|{table}|{key}] {e}")
         return False
-    return response['Item']
+    return response.get('Item')
+
+@statsd.statsd_root_stats
+def query(table, expression, values):
+    try:
+        response = table.query(
+            KeyConditionExpression=expression,
+            ExpressionAttributeValues=values
+        )
+    except ClientError as e:
+        util.logger.error(f"[QUERY|{table}|{expression}] {e}")
+        return False
+    return response.get('Items')  
+
+
+'''
+DDB Notes:
+
+## Append or Create to list
+
+    key = {'id': users_id}
+    expression = "SET #foodies = list_append(if_not_exists(#foodies, :empty_list), :foodie)"
+    names = {"#foodies": 'foodies'}
+    values = {":empty_list": [], ":foodie": [foodie_id]}
+
+'''

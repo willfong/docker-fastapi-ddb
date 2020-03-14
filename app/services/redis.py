@@ -7,7 +7,6 @@ r = redis.Redis(host=os.environ.get('REDIS_ENDPOINT_URL'))
 
 @statsd.statsd_root_stats
 def put(key, value, ttl):
-    util.logger.warning(f"Key: {key}")
     if r.set(key, json.dumps(value), ex=ttl):
         return True
     return False
