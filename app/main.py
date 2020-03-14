@@ -3,7 +3,7 @@ from .routers import login, messages
 from .services import util, statsd
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
-from starlette.responses import RedirectResponse, JSONResponse
+from starlette.responses import RedirectResponse, JSONResponse, HTMLResponse
 
 app = FastAPI()
 
@@ -15,26 +15,12 @@ app.include_router(login.router, prefix="/login")
 app.include_router(messages.router, prefix="/messages")
 
 
-'''
-# Require authentication for all requests
-# This doesn't really work yet, but the idea is here
-@app.middleware("http")
-async def require_authorization(request: Request, call_next):
-    response = await call_next(request)
-    if request.scope['path'].startswith('/todo'):
-        #util.logger.warning(request.headers)
-        auth_header = request.headers.get('Authorization')
-        if not auth_header:
-            util.logger.warning("You need to /login")
-            return JSONResponse(content={"msg": "Error logging in..."})
-        #util.logger.warning(f"Logged in as: {auth_header}")
-    return response
-'''
-
-@app.get("/")
+@app.get("/.*", include_in_schema=False)
 @statsd.statsd_root_stats
-def index():
-    return RedirectResponse(url='/static/index.html')
+def root():
+    with open('/app/app/static/index.html') as f:
+        return HTMLResponse(content=f.read(), status_code=200)
+
 
 
 @app.get("/log-output-test")
