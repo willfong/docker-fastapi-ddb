@@ -52,18 +52,7 @@ https://developers.google.com/identity/protocols/OpenIDConnect
 
 ## Production Deployment Notes
 
-- Run Certbot to get initial certificate
-```
-docker run -it --rm --name certbot \
-    -p 80:80 \
-    -v "${PWD}/data/certbot/conf/:/etc/letsencrypt" \
-    -v "${PWD}/data/certbot/lib/:/var/lib/letsencrypt" \
-    -v "${PWD}/data/certbot/www/:/www" \
-    --name initcert \
-    certbot/certbot certonly
-```
 - Create `.env` file
-- `sudo chown -R ec2-user .` Certbot runs as root
 - `docker-compose up`
 - `npm install`
 - `npm run build; cp -r dist/* ../static`
