@@ -17,3 +17,12 @@ def get(k):
     if results:
         return json.loads(results)
     return False
+
+def incr(k):
+    if r.incr(k):
+        return True
+    return False
+
+# TODO: scan shouldn't be used. Needs to be upgraded
+def scan():
+    return r.scan()
