@@ -10,6 +10,15 @@
 //import SomeComponent from "@/components/somecomponent";
 //import { mapGetters } from "vuex";
 
+function ymd(date) {
+  var y = date.getFullYear();
+  var m = date.getMonth() + 1;
+  var d = date.getDate();
+  var mm = m < 10 ? '0' + m : m;
+  var dd = d < 10 ? '0' + d : d;
+  return `${y}-${mm}-${dd}`;
+}
+
 export default {
   name: "about",
   /*
